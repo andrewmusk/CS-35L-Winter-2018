@@ -1,0 +1,70 @@
+1. We can do this using the command man -k word. 
+2. To do this we use which command. The cp file is /usr/local/cs/bin/cp and the wc is /usr/local/cs/bin/wc
+3. man -executable
+   find / -executable
+   The files are in usr/bin 
+   The executables are X w and [
+   We use man to check these:
+   w - Show who is logged on and what they are doing.
+   X - a portable, network-transparent window system
+   [ - is a bash built in command for conditional tests
+
+4. readlink -f /usr/bin/emacs
+   /usr/bin/emacs-24.3
+5. man chmod
+   g+s: this sets the group id on execution 
+   o-x: this removes the permission for execution by others
+6. find / -mtime 21
+7. find / -type d -mtime -20
+   though permissions don't allow this in root so I check my personal folder /u/cs/ugrad/musk
+   
+   .
+   ./Desktop
+
+8. which find 
+   /usr/bin/
+   find /usr/bin/ -type l | wc 
+   which resulted in 293
+9. cd /usr/lib/ 
+   ls -alt 
+   the oldest file is libgpg-error.so.0.10.0
+10. man LOCALE 
+ Locale gets its data from environment variables defined in localedef
+11. emacs
+    C-h a sort
+    Buffer-menu-sort
+sort-columns
+sort-fields
+sort-lines
+sort-numeric-fields
+sort-pages
+sort-paragraphs
+sort-regexp-fields
+tabulated-list-col-sort
+tabulated-list-sort	
+
+12. I searched this using C-h k C-M-a 
+C-M-a
+Move backward to the beginning of a defun
+C-M-h
+Put mark at end of this defun, point at beginning.
+
+13.C-h k C-g
+C-g runs the command keyboard-quit (found in global-map), which is an
+interactive compiled Lisp function in ‘simple.el’.
+
+It is bound to C-g.
+
+(keyboard-quit)
+
+Signal a ‘quit’ condition.
+During execution of Lisp code, this character causes a quit directly.
+At top-level, as an editor command, this simply beeps.
+
+14. C-h f yank
+Reinsert ("paste") the last stretch of killed text.
+
+15. The only difference I noticed is that the dired function prints out the hidden directories
+and directories that start with '.' The dired function prints what ls -la would print. 
+
+C-x C-d prints out the directories

@@ -1,0 +1,84 @@
+1) The first part of the lab involves writing the c programs. The functions
+of the two programs are very similar. They are both used to replace characters
+in strings based on the given operands. The first part of the main function
+involves calling 3 error checking functions. These check the operands are 
+of the same legnth, there are only 2 of them and there are no repeats in the 
+first operand. In both programs we check for errors after reading/writing, a
+character. The algorithm I use, checks if the inputted character matches
+any character in the from string and then changes to character to the
+matching index charcter in the to string. Otherwise the original character is 
+outputted. 
+
+2) I run each of these programs by writing
+
+gcc -o tr2b tr2b.c
+gcc -o tr2u tr2u.c
+
+3) I test the program using
+
+ printf 'i am a very monkey monkey man' | ./tr2b me fu
+
+4)To perform the next steps I create a new file called names.txt, that is the 
+string 'james' repeated. The file size is larger than 5,000,000 bytes.
+
+5) I then use my programs above to change the name james to henry in every
+case
+
+6) We then run strace to find out how many system calls are used.
+
+strace -c ./tr2b james henry < names.txt > output.txt
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 49.16    0.000294           0       613           write
+ 25.42    0.000152           0       615           read
+
+------ ----------- ----------- --------- --------- ----------------
+100.00    0.000598                  1254         1 total
+
+strace -c ./tr2u james henry < names.txt > output.txt
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 55.41   22.615027           5   5015804           write
+ 44.59   18.198424           4   5015806           read
+
+------ ----------- ----------- --------- --------- ----------------
+100.00   40.813451              10031632         1 total
+
+From this we clearly see that the buffered version makes fewer 
+system calls than the unbuffered version. This is the case since
+the unbuffered version reads in one byte at a time.
+
+strace -c ./tr2u s y < names.txt
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 54.72   22.551138           4   5015804           write
+ 45.28   18.659062           4   5015806           read
+
+strace -c ./tr2b s y < names.txt
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 99.35    0.407261           5     89729           write
+  0.61    0.002505           4       615           read
+ 
+From this we see that there are similar amount of system calls
+for the unbuffered version since everything is still read and written out
+as a system call, however there is a big difference in the buffered 
+version as ther are more system calls.
+
+7) We now check the time differences for these two programs
+
+time ./tr2u james henry < names.txt > output.txt
+
+real 0m9.744s
+user 0m1.416s
+sys  0m8.235s
+
+time ./tr2b james henry < names.txt > output.txt
+
+real 0m0.349s
+user 0m0.217s
+sys  0m0.010s
+
+From this we can see that tr2b is significantly faster than tr2u. This is 
+becuase they use much fewer system calls. 
+ 

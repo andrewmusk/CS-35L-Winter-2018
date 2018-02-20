@@ -1,0 +1,15 @@
+Question 1)
+
+Brady's patch removed the code because the line in the code is unnecessary.
+After deleting the line, the code performs the same way. The issue with 
+the line is that it is repeated below. Since it is a go-to(switch) statement
+the code would flow through and perform in the same way. However it is 
+good practice to delete this to keep code clean and prevent any further errors
+
+Question 2)
+
+The patch assumes that the reader of the date is an english speaker. Therefore,
+the patch would cause some issues in areas where users, aren't used
+to reading the date in English. The patch might also cause issues
+if there were programs that used the previous date format and now
+contain erorrs as the format has changed.

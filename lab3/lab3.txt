@@ -1,0 +1,120 @@
+1) I downloaded the tar file from the website using:
+wget ftp://ftp.gnu.org/gnu/coreutils/coreutils-7.6.tar.gz
+2) I moved the file from Downloads to its own directory lab3
+ mv ~/Downloads/coreutils-7.6.tar.gz .
+3) Extracted the files using the unizp command
+ tar xvf coreutils-7.6.tar.gz
+4) Entered the file using the
+ cd conreutils-7.6 
+5) ran the configure file using and put it into a temp directory 
+./configure 
+6) checked that it installed correctly using the command echo $? which outputs 0
+7) Installed the file using
+ make install
+8) Checked that it installed correctly since the echo $? produced an output of 2
+9) Moved to dir
+cd ~/lab3/coreutilsTemp/bin
+10) checked the environment variables
+locale
+11) Checked the commands to see different output
+./ls -l
+ls -l 
+We see the bug here in the format of the date
+2018-01-28 19:04 for the first command
+Jan 28 19:04 for the second command
+12) We go into the emacs file to apply the patch
+emacs ~/lab3/coreutils-7.6/src/ls.c
+13) We go to the top of the source tree
+cd ~/lab3/coreutils-7.6
+make  all-recursive
+make[1]: Entering directory '/w/home.07/cs/ugrad/musk/lab3/coreutils-7.6'
+Making all in lib
+make[2]: Entering directory '/w/home.07/cs/ugrad/musk/lab3/coreutils-7.6/lib'
+make  all-recursive
+make[3]: Entering directory '/w/home.07/cs/ugrad/musk/lab3/coreutils-7.6/lib'
+make[4]: Entering directory '/w/home.07/cs/ugrad/musk/lab3/coreutils-7.6/lib'
+make[4]: Leaving directory '/w/home.07/cs/ugrad/musk/lab3/coreutils-7.6/lib'
+make[3]: Leaving directory '/w/home.07/cs/ugrad/musk/lab3/coreutils-7.6/lib'
+make[2]: Leaving directory '/w/home.07/cs/ugrad/musk/lab3/coreutils-7.6/lib'
+Making all in src
+make[2]: Entering directory '/w/home.07/cs/ugrad/musk/lab3/coreutils-7.6/src'
+make  all-am
+make[3]: Entering directory '/w/home.07/cs/ugrad/musk/lab3/coreutils-7.6/src'
+  CC     ls.o
+  CCLD   dir
+  CCLD   vdir
+  CCLD   ls
+make[3]: Leaving directory '/w/home.07/cs/ugrad/musk/lab3/coreutils-7.6/src'
+make[2]: Leaving directory '/w/home.07/cs/ugrad/musk/lab3/coreutils-7.6/src'
+Making all in doc
+make[2]: Entering directory '/w/home.07/cs/ugrad/musk/lab3/coreutils-7.6/doc'
+make[2]: Nothing to be done for 'all'.
+make[2]: Leaving directory '/w/home.07/cs/ugrad/musk/lab3/coreutils-7.6/doc'
+Making all in man
+make[2]: Entering directory '/w/home.07/cs/ugrad/musk/lab3/coreutils-7.6/man'
+  GEN    dir.1
+  GEN    vdir.1
+  GEN    ls.1
+make[2]: Leaving directory '/w/home.07/cs/ugrad/musk/lab3/coreutils-7.6/man'
+Making all in po
+make[2]: Entering directory '/w/home.07/cs/ugrad/musk/lab3/coreutils-7.6/po'
+make[2]: Nothing to be done for 'all'.
+make[2]: Leaving directory '/w/home.07/cs/ugrad/musk/lab3/coreutils-7.6/po'
+Making all in tests
+make[2]: Entering directory '/w/home.07/cs/ugrad/musk/lab3/coreutils-7.6/tests'
+make[2]: Nothing to be done for 'all'.
+make[2]: Leaving directory '/w/home.07/cs/ugrad/musk/lab3/coreutils-7.6/tests'
+Making all in gnulib-tests
+make[2]: Entering directory '/w/home.07/cs/ugrad/musk/lab3/coreutils-7.6/gnulib-tests'
+make  all-recursive
+make[3]: Entering directory '/w/home.07/cs/ugrad/musk/lab3/coreutils-7.6/gnulib-tests'
+make[4]: Entering directory '/w/home.07/cs/ugrad/musk/lab3/coreutils-7.6/gnulib-tests'
+make[4]: Nothing to be done for 'all-am'.
+make[4]: Leaving directory '/w/home.07/cs/ugrad/musk/lab3/coreutils-7.6/gnulib-tests'
+make[3]: Leaving directory '/w/home.07/cs/ugrad/musk/lab3/coreutils-7.6/gnulib-tests'
+make[2]: Leaving directory '/w/home.07/cs/ugrad/musk/lab3/coreutils-7.6/gnulib-tests'
+make[2]: Entering directory '/w/home.07/cs/ugrad/musk/lab3/coreutils-7.6'
+make[2]: Nothing to be done for 'all-am'.
+make[2]: Leaving directory '/w/home.07/cs/ugrad/musk/lab3/coreutils-7.6'
+make[1]: Leaving directory '/w/home.07/cs/ugrad/musk/lab3/coreutils-7.6'
+
+The make all-recursive command is used to check all of the directories under 
+coreutils-7.6. This command checks if any of them have been modified since
+the previous build. From the commands we mainly see entering and leaving directories.
+The only directories in which other commands are run are in "src" and "man". 
+The src directory is the directory where we modified the ls.c file. This makes
+sense since we want this file to be recompiled. The commands in src are:
+  CC     ls.o
+  CCLD   dir
+  CCLD   vdir
+  CCLD   ls
+
+The first command CC runs the C compiler to produce the file ls.o
+The next commands CCLD are all used to link the files in the man directory.
+The commands in man are:
+
+  GEN    dir.1
+  GEN    vdir.1
+  GEN    ls.1
+
+These commands are all used to create new files
+
+14) we create two new files to test this on
+
+touch today
+touch -t 9711131200 birthday
+
+cd ~/lab3/coreutils-7.6/src && ./ls -l ~/today ~/birthday
+-rw-r--r-- 1 musk csugrad 0 Nov 13  1997 /u/cs/ugrad/musk/birthday
+-rw-r--r-- 1 musk csugrad 0 Jan 28 19:29 /u/cs/ugrad/musk/today
+
+When we run this command here, the patched version of the ls command 
+will run. The output of the date is now in the correct format. 
+
+cd ~/lab3/coreutilsTemp/bin && ./ls -l ~/today ~/birthday
+-rw-r--r-- 1 musk csugrad 0 1997-11-13 12:00 /u/cs/ugrad/musk/birthday
+-rw-r--r-- 1 musk csugrad 0 2018-01-28 19:29 /u/cs/ugrad/musk/today
+
+In this case the unpatched version of the command will run
+and the date is in the incorrect format.
+

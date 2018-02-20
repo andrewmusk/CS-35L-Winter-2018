@@ -1,0 +1,15 @@
+#include <stdio.h>
+
+int frobcmp(char const* a,char const* b, size_t n)
+{
+  
+}
+
+int main(void)
+{
+  char* word;
+  char** words;
+  word = (char*)malloc(sizeof(char));
+  words = (char**) malloc(sizeof(char*));
+
+}

@@ -1,0 +1,12 @@
+1) I downloaded the tar file from the website
+2) I moved the file from Downloads to its own directory lab3
+ mv ~/Downloads/coreutils-7.6.tar.gz .
+3) Extracted the files using the unizp command
+ tar xvf coreutils-7.6.tar.gz
+4) Entered the file using the cd conreutils-7.6 
+5) ran the configure file using 
+./configure
+6) checked that it installed correctly using the command echo $? which outputs 0
+7) Installed the file using make install
+8) Checked that it installed correctly since the echo $? produced an output of 2
+9)

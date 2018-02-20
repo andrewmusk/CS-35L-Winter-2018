@@ -1,0 +1,123 @@
+Lab 4
+
+1) To start off I downloaded the coreutils with bug file
+wget http://web.cs.ucla.edu/classes/winter18/cs35L/assign/coreutils-with-bug.tar.gz
+
+2) I then unzipped the file using 
+tar -xf coreutils-with-bug
+
+3) Then to configure the file we run
+./configure --prefix=/u/cs/ugrad/musk/lab4/coruetils
+
+4) Then to build the program we run
+make
+
+5) This outputs the following error
+
+In file included from utimecmp.c:41:0:
+utimens.h:2:5: error: conflicting types for 'futimens'
+ int futimens (int, char const *, struct timespec const [2]);
+     ^~~~~~~~
+In file included from utimecmp.h:25:0,
+                 from utimecmp.c:25:
+/usr/include/sys/stat.h:373:12: note: previous declaration of 'futimens' was here
+ extern int futimens (int __fd, const struct timespec __times[2]) __THROW;
+            ^~~~~~~~
+make[3]: *** [Makefile:659: utimecmp.o] Error 1
+make[3]: Leaving directory '/w/home.07/cs/ugrad/musk/lab4/coreutils-with-bug/lib'
+make[2]: *** [Makefile:414: all] Error 2
+make[2]: Leaving directory '/w/home.07/cs/ugrad/musk/lab4/coreutils-with-bug/lib'
+make[1]: *** [Makefile:419: all-recursive] Error 1
+make[1]: Leaving directory '/w/home.07/cs/ugrad/musk/lab4/coreutils-with-bug'
+make: *** [Makefile:357: all] Error 2
+
+6) We then download the patch for the program
+
+wget http://web.cs.ucla.edu/classes/winter18/cs35L/assign/coreutils.diff
+
+7) To apply the patch we use the patch command
+
+patch -p0 < coreutils.diff
+
+The -p0 indicates whether the cut off certain parts of the file path.
+
+8) We now build using
+
+make
+
+9) We then create a temporary directory and test whether the command works
+corretly
+
+tmp=$(mktemp -d)
+cd $tmp
+touch -d '1918-11-11 11:00 GMT' wwi-armistice
+touch now
+sleep 1
+touch now1
+~/lab4/coreutils-with-bug/src/ls -lt --full-time wwi-armistice now now1
+
+from which we get
+
+-rw-r--r-- 1 musk csugrad 0 1918-11-11 03:00:00.000000000 -0800 wwi-armistice
+-rw-r--r-- 1 musk csugrad 0 2018-02-12 00:53:35.933515277 -0800 now1
+-rw-r--r-- 1 musk csugrad 0 2018-02-12 00:53:30.478423973 -0800 now
+
+which is the incorrect output since the oldest file is outputted first.
+
+we use gdb to check what is happening incorrectly here
+
+we launch gdb by running
+
+gdb ~/lab4/coreutils-with-bug/src/ls
+
+to check the functions being used in this command we run
+
+info functions
+
+looking through these functions we see a function called sort_files. I assume
+this is where the error is coming from since the sorting is incorrect.
+We set a breakpoint here to see what is happening
+
+break sort_files
+
+stepping through this function using s we see that it calls a function 
+called compare_mtime
+
+I see that this function is in timespec.h so I go to this file to look at
+this function
+
+list compare_mtime
+
+This shows us the method 
+
+int diff = a.tv_sec - b.tv_sec;
+return diff ? diff : a.tv_nsec - b.tv_nsec;
+
+This shows that the method using subraction of the dates to see if the 
+one date is before or after the other. As we know with integers, integer
+overflow can occur if there is a large difference between the dates
+
+One way to fix this is to use comparison instead of using subtraction. To fix this we make a copy of the file
+
+cp /lib/timespec.h timespec.h
+
+I then made the relevant changes in emacs and then got the diff of the 
+two fiels
+
+diff -u coreutils-with-bug/lib/timespec.h timespec.h
+> lab4.diff
+
+From this I add a changelog to the file by using C-x 4 a in emacs and copying
+and pasting it into the diff file
+
+When we try to recreate this in the home directory, we get the following output
+
+-rw-r--r-- 1 musk csugrad 0 Dec 17  2054 wwi-armistice
+-rw-r--r-- 1 musk csugrad 0 Feb 12 02:03 now1
+-rw-r--r-- 1 musk csugrad 0 Feb 12 02:03 now
+
+This error we get here is due to the different time stamps. We get the 
+year as 2054. All timestamps are the number of seconds from the the unix
+epoch 1970. The local file system uses signed 32-bit integers whereas
+the SEASnet filesystem uses unsigned timestamps. Any time before the unix epoch
+gets added by using sign extension and this is why 1918 becomes 2054. 

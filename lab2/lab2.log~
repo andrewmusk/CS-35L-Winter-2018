@@ -1,0 +1,139 @@
+1. export LC_ALL='C'
+
+Locale is now set to the correct specification
+
+2. sort /usr/share/dict/words > words
+
+This puts the words into the file words in the working directory
+
+3. wget http://web.cs.ucla.edu/classes/winter17/cs35L/assign/assign2.html
+
+This downloads the file and keeps it in assign2.html
+
+4. tr -c 'A-Za-z' '[\n*]' < assign2.html
+
+This outputs all the words in the webpage however for every character that isn't with the
+`alphabet, it outputs a new line.
+
+5. tr -cs 'A-Za-z' '[\n*]' < assign2.html
+ 
+This command does the same thing as the previous command however
+the 's' argument is the option "squeeze-repeats". This means that when 
+there are repeated characters that are not in the A-Za-z region, only a
+single occurence of the character happens. This is the reason why there 
+are no longer bigs spaces, because the other newline characters are
+replaced with a single one.
+ 
+6. tr -cs 'A-Za-z' '[\n*]' < assign2.html | sort
+
+This command is different from the previous line in that it outputs the words in the file
+each on its own line, however, this time it outputs the words sorted in alphabetical order.
+
+7.  tr -cs 'A-Za-z' '[\n*]' < assign2.html | sort -u
+
+This command is the same as the previous one however in this command only the unique words
+are ouputted. The duplicate occurences of words are removed
+
+8.  tr -cs 'A-Za-z' '[\n*]' < assign2.html | sort -u | comm -words
+
+This command will compare the previous resultant list of words from the webpage with
+the words from the file 'words'. This generates three columns. The first column is made
+up of words that only occur in the resultant output from the previous command. The second
+column is made up of words that only occur in the file 'words'. The last column contains the
+words that are in both columns
+
+9.  tr -cs 'A-Za-z' '[\n*]' < assign2.html | sort -u | comm -words -23
+
+This command is the same as the one above except that the -23 argument
+will hide the 2nd and 3rd columns of the output.
+
+10.  wget http://mauimapp.com/moolelo/hwnwdseng.htm
+
+We do this to download the english to hawaiian table list
+
+11. We then start writing commands form the script
+
+grep '<td>.\{1,\}<\/td>' |
+
+This line pulls out the word that are in the table
+
+sed -n '1~2!p' - |
+
+This is used to remove the english words by deleting everything by a factor of 2
+
+sed 's/<\/td>//g'|
+
+this command removes the </td>'s
+
+sed 's/<td>//g'|
+
+this removes the <td>'s
+
+sed 's/<u>//g'|
+
+this command removes all the <u>'s
+
+sed 's/</u>//g'|
+
+this command removes all the </u>'s
+
+sed s/\`/\'/g | replace all ` with '
+
+tr '[:upper:]' '[:lower:]' |
+
+this makes all upper case characters lower
+
+sed 's/\,/\n/g'|
+
+This replaces all commas with new lines
+
+sed 's/\ /\n/g'|
+
+This replaces all spaces with new lines
+
+sed 's/\n//g'|
+
+This removes all the new lines
+
+grep -E "[aeioulhpk'mnw]*" |
+
+This command removes all the lines with non hawaaian characters
+
+sort -u
+
+This sorts all the unique words
+
+11. After this we change the permissions using
+
+chmod +x buildwords
+
+12.
+
+./buildwords <hwnwdseng.hmt > words
+
+This will build the hawaiian dictionary in the hwords file
+
+13. tr -cs 'A-Za-z' '[\n*]' < assign2.html | tr '[:upper:]''[:lower:]' | sort -u | comm -words -23
+     | wc -l
+
+This counts how many words from the asisgnment webpage are not found in the file words which is 39
+
+14.  tr -cs 'A-Za-z' '[\n*]' < assign2.html | tr '[:upper:]''[:lower:]' | sort -u | comm -hwords -23
+     | wc -l
+
+This counts how many words from the assignment webpage are not found in the file hwords which is 405
+
+15.  tr -cs 'A-Za-z' '[\n*]' < hwords | tr '[:upper:]''[:lower:]' | sort -u | comm -hwords -23
+     | wc -l
+
+This compares hwords to itself. It does output that there are 47 different words though.
+This is becuase all the words with an apostrophe are split up in the script. When that 
+step is removed we noticed that there are no differences between the words
+
+16 Some examples of words misspelled in English but not in Hawaiian 
+are wiki, lau, and halau. Examples of words misspelled in Hawaiian 
+and not in English are with, word, and your.
+
+16. Some of the words that are misspelled in english but not Hawaiian are wiki, halau, and lau.
+And some of the words mispelled in Hawaiian and not Enlgish are all, open.
+

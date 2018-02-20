@@ -1,0 +1,64 @@
+1) The first part of the lab involves writing the c programs. The functions
+of the two programs are very similar. They are both used to replace characters
+in strings based on the given operands. The first part of the main function
+involves calling 3 error checking functions. These check the operands are 
+of the same legnth, there are only 2 of them and there are no repeats in the 
+first operand. In both programs we check for errors after reading/writing, a
+character. The algorithm I use, checks if the inputted character matches
+any character in the from string and then changes to character to the
+matching index charcter in the to string. Otherwise the original character is 
+outputted. 
+
+2) I run each of these programs by writing
+
+gcc -o tr2b tr2b.c
+gcc -o tr2u tr2u.c
+
+3) I test the program using
+
+ printf 'i am a very monkey monkey man' | ./tr2b me fu
+
+4)To perform the next steps I create a new file called names.txt, that is the 
+string 'james' repeated. The file size is larger than 5,000,000 bytes.
+
+5) I then use my programs above to change the name james to henry in every
+case
+
+6) We then run strace to find out how many system calls are used.
+
+[musk@lnxsrv09 ~/lab5]$ strace -c ./tr2b james henry < names.txt > output.txt
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 75.83    0.002990           2      1691           read
+ 23.84    0.000940           1      1689           write
+  0.18    0.000007           1         9           mmap
+  0.15    0.000006           2         4           fstat
+  0.00    0.000000           0         2           open
+  0.00    0.000000           0         2           close
+  0.00    0.000000           0         4           mprotect
+  0.00    0.000000           0         1           munmap
+  0.00    0.000000           0         1           brk
+  0.00    0.000000           0         1         1 access
+  0.00    0.000000           0         1           execve
+  0.00    0.000000           0         1           arch_prctl
+------ ----------- ----------- --------- --------- ----------------
+100.00    0.003943                  3406         1 total
+
+strace -c ./tr2u james henry < test.txt > output.txt
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 39.56    0.000127           3        46           write
+ 25.55    0.000082           2        48           read
+  8.41    0.000027           4         7           mmap
+  7.79    0.000025           6         4           mprotect
+  7.79    0.000025          25         1           execve
+  3.43    0.000011           6         2           open
+  2.80    0.000009           9         1           munmap
+  1.87    0.000006           6         1         1 access
+  0.93    0.000003           2         2           fstat
+  0.93    0.000003           3         1           brk
+  0.62    0.000002           1         2           close
+  0.31    0.000001           1         1           arch_prctl
+------ ----------- ----------- --------- --------- ----------------
+100.00    0.000321                   116         1 total
+ 

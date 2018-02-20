@@ -1,0 +1,112 @@
+We test our various sfrob implementations
+
+Firstly we test with a large file
+
+sfrob
+
+time cat large.txt | ./sfrob > junk.txt
+
+real	0m21.229s
+user	0m20.314s
+sys	0m0.659s
+
+sfrobu
+
+time ./sfrobu <large.txt >junk.txt
+
+real 4m36.490s
+user 0m24.776s
+sys  3m31.736s 
+
+
+We then test with a medium file
+
+sfrob 
+
+time cat medium.txt | ./sfrob > junk.txt
+real  0m1.028s
+user  0m0.463s
+sys   0m0.049s
+
+sfrobu
+
+time ./sfrobu < medium.txt > junk.txt
+real	0m1.858s
+user	0m0.267s
+sys	0m1.232s
+
+small file
+
+sfrob 
+
+time cat small.txt | ./sfrob > junk.txt
+
+real 0m0.169s
+user 0m0.139s
+sys  0m0.011s
+
+sfrobu
+
+time ./sfrobu < small.txt >junk.txt
+
+real 0m0.979s
+user 0m0.097s
+sys  0m0.857s
+
+
+From this we can see that the sfrob program is much fasster at processing the files
+than the unbuffered version sfrobu. 
+We then look at the all the word counts
+
+wc -l large.txt - 783841 and comparisons 54394668
+wc -l medium.txt - 19980 and comparisons 1458029
+wc -l small.txt - 6451 and comparisons 427285
+
+If we run a regression on this we get that:
+
+y(comparisons) = 69(lines) + 25579
+R^2 = 1
+
+
+We then look at a comparison of all the functions
+
+
+sfrob
+
+time cat large.txt | ./sfrob > junk.txt
+
+real    0m21.229s
+user    0m20.314s
+sys     0m0.659s
+
+sfrobu
+
+time ./sfrobu <large.txt >junk.txt
+
+real 1m57.263s
+user 0m11.950s
+sys  1m43.921s
+
+sfrobs
+
+time cat large.txt | ./sfrobs > junk.txt
+
+real 0m19.857s
+user 0m20.446s
+sys  0m0.651s
+
+time cat large.txt | ./sfrobs -f > junk.txt
+
+real 0m21.207s
+user 0m22.012s
+sys  0m0.643s
+
+time ./sfrobu -f < large.txt > junk.txt
+
+real 1m59.916s
+user 0m14.505s
+sys  1m43.752s
+
+From the results we see that sfrobs is the fastest function with sfrob, second fastest,
+and sfrobu the slowest. We see that both functions with the -f arguments are slightly
+slower than their respective functions.

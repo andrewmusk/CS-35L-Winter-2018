@@ -1,0 +1,59 @@
+#!/bin/bash
+
+dir=$1
+
+NormalFiles=`ls $dir | sort`
+DotFiles=`ls -a $dir | grep '^\.' | sort`
+AllFiles=`ls -a $dir | sort`
+let DotTotal=0
+let NormTotal=0
+declare -a DotArray
+declare -a NormArray
+
+restore="$IFS"
+IFS=$'\n'
+
+for FILE in $AllFiles
+do
+    if [ ! -r "$dir/$FILE" ]
+    then
+        echo "You do not have permissions for $dir/$FILE"
+    fi
+done
+
+for FILE in $DotFiles
+do
+    if [ ! -L "$dir/$FILE" ] && [ -f "$dir/$FILE" ] && [ -r "$dir/$FILE" ]
+    then
+        DotArray[$DotTotal]="$dir/$FILE"
+        let DotTotal=DotTotal+1
+    fi
+done
+
+for FILE in $NormalFiles
+do
+    if [ ! -L "$dir/$FILE" ] && [ -f "$dir/$FILE" ] && [ -r "$dir/$FILE" ]
+    then
+        NormArray[$NormTotal]="$dir/$FILE"
+        let NormTotal=NormTotal+1
+    fi
+done
+
+DotArray=("${DotArray[@]}" "${NormArray[@]}")
+let count=${#DotArray[@]}
+
+
+for (( i=0; i<$count; i++ ))
+do
+    for (( j=i+1; j<$count; j++ ))
+    do
+        cmp -s "${DotArray[$i]}" "${DotArray[$j]}"
+        if [ $? -eq 0 ]
+        then
+            ln -fP "${ARRAY[$i]}" "${ARRAY[$j]}"
+            ARRAY[$j]=ARRAY[$i]
+        fi
+    done
+done
+
+IFS=$restore
