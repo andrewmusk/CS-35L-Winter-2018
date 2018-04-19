@@ -1,0 +1,73 @@
+HW9 
+
+1) git checkout v3.0 -b quote 
+
+2) we then run 
+
+patch -p1 < ../../quote-3.0-patch.txt
+
+3) From this we see that we have the following changes
+   modified:   src/cmp.c
+   modified:   src/diff.c
+   modified:   src/diff3.c
+   modified:   src/dir.c
+   modified:   src/sdiff.c
+   modified:   src/util.c
+
+4) emacs src/cmp.c
+...
+
+In emacs I used the command C-x 4 a to write a changelog entry for each of 
+the modified files
+
+5) After this we commit the changes with changelog as the message
+
+git commit -Fa src/ChangeLog
+
+6) Firstly I get the hex for my last commit
+This is 6676f3f3abb1ad21dacdccd8dc1d50c950eee9f7.
+
+git format-patch -1 --stdout 6676f3f3abb1ad21dacdccd8dc1d50c950eee9f7 > formatted-patch.txt
+
+This creates the patch
+
+7) scp formatted-patch.txt yashas@lnxsrv09.seas.ucla.edu:lab9/hw/diffutils/formatted-patch.txt
+
+This send the file to my partner
+
+8) I then create a new branch to test out my partners patch
+
+git checkout v3.0 -b partner
+
+10) git am ../../yashas-formatted-patch.txt
+
+I was then able to view the contents of his patch which were 
+
+commit dca3bc0b09ea30f6afc975bdd4f5e5a13a29b4da
+Author: Yashas Navaratna <yashas@lnxsrv07.seas.ucla.edu>
+Date:   Mon Mar 12 20:05:24 2018 -0700
+
+    2018-03-12 Yashas Navaratna <yashas@lnxsrv07.seas.ucla.edu>
+
+        * quote-3.0-patch.txt:
+        * src/cmp.c: Changed all of the "`" to "'"
+        * src/diff.c: Changed all of the "`" to "'" 
+        * src/diff3.c: Changed all of the "`" to "'"
+        * src/dir.c: Changed all of the "`" to "'"
+        * src/sdiff.c: Changed all of the "`" to "'"
+        * src/util.c: Changed all of the "`" to "'"
+
+This applied his patch
+
+11) ./bootstrap
+./configure
+make
+make check
+
+All works as expected from these commands
+
+I then use make distdir which creates a new directory with the patch. In this I check the changelog
+and check that it is the same as the log. This confirms that the patch worked correctly. 
+
+12) I ssh into the seas server using the -Y argument. From here I navigated to the given directory and entered
+gitk 

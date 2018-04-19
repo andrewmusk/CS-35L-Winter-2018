@@ -1,0 +1,9 @@
+Firstly in the top left corner of the screen we see a diagram of the commit graph. This shows a track
+of each branch and the commit on the branches. In our case we see a branch merging into master which
+is what we are looking for. We see a description of this which says merge master. 
+
+To the right of this is the correspondin list showing the author's name, email and date and time of their
+commit. 
+
+We have the commit of merge master selected in this case. Below this we see the SHAI id. Below this
+we see a description of the merge with the version name, the parent and child in the tree.

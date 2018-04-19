@@ -1,0 +1,26 @@
+1.) Since we are using shh, the data is encrypted and the transfer is secure.
+The data been sent on the network is encrypted using the receiver's public key.
+Since the private key is never passed on the network, only the receiver, who
+owns the private key is able to decrypt the data. Once the authentication has
+taken place, a session key is established which is used to encrypt further 
+data transfer. Since the intital key is unable to be encrypt, neither is the
+session key. Therefore any data from this point is unable to be decrypted. 
+
+If the keyboard was tapped and they can observe our keystrokes, then they
+would have access to the private key password if we were entering it in. 
+However since we had disabled password authentication after key generation,
+they still wouldn't have the private key to decrypt the data.
+
+If they had access to a usb, it would not be secure. The attackers would have
+access to the folder that contains the .ssh files and all of the keys. Using
+these keys they would be able to decrypt all of the data. 
+
+2.) gpg --verify does not verify the original owner of the file. The command 
+only compares the decrypted data to the decrypted cleartext signature. If
+someone intercepted the file and changed the data and reencrypted the file,
+you would have no way of knowing that it had been intercepted. The verification
+would work since it would only check the signature against the data. The 
+solution to this is to use a third party source to keep track of the
+owner of a file. IN this case the 3rd party will send a certificate to
+notify who the original sender is. The issue with this is that we trust a
+3rd party company with our data

@@ -1,0 +1,116 @@
+1) Firstly we connect to our beaglebon
+
+sudo ssh root@192.168.7.2
+
+We are now connected
+
+2) We then need to connect to wifi
+
+we use the command sudo connmanctl 
+to connect
+
+3) We then connect to wifi using the following commands
+
+enable wifi
+scan wifi
+services
+agent on
+connect wifi_2cf7f1066b19_6950686f6e65_managed_psk
+quit
+
+4) We then update using
+
+sudo apt-get update
+
+5) After this we install xauth and firefox 
+
+6) sudo apt-get install xauth
+
+7) sudo apt-get install firefox-esr-l10n-en-gb
+
+8) dpkg --get-selections | frep openssh
+
+9) We then generate keys 
+
+ssh-keygen
+
+Generating public/private rsa key pair.
+Enter file in which to save the key (/root/.ssh/id_rsa): /root/.ssh/id_rsa
+/root/.ssh/id_rsa already exists.
+Overwrite (y/n)? y
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in /root/.ssh/id_rsa.
+Your public key has been saved in /root/.ssh/id_rsa.pub.
+The key fingerprint is:
+54:df:f1:e6:de:1a:d3:07:16:e0:f1:98:c6:92:c5:0f root@beaglebone
+The key's randomart image is:
++---[RSA 2048]----+
+|          ..+ .  |
+|         . *EB o |
+|        . o Bo+ o|
+|       .   o  .+ |
+|        S     o .|
+|             . +.|
+|              o =|
+|               +.|
+|              .  |
++-----------------+
+
+From this we generated keys for access with the password 
+spacejam.
+
+10) I then added my partner as a user
+
+sudo useradd -d /home/yash -m yashas
+
+11) I then set yash's password using
+
+sudo passwd yashas
+
+"dragon"
+
+12) I then went to cd /home/yash
+
+13) sudo mkdir .ssh
+
+I then allow yash to have access using
+
+sudo chown -R yashas .ssh
+
+14) sudo chmod 700 .ssh
+
+15) I then get the ip address whcih my partner uses to
+ssh into my beaglbobe. Yash opened firefox on my machine
+and he didn't need his password by using ssh-agent
+
+ifconfig 
+
+and got 192.168.8.1
+
+I then exit.
+
+As a client I do the following operations 
+
+1) sudo ssh -y root@192.168.7.2
+
+2)We now launch the ssh agent so that I am able to login
+without using my password
+
+ eval 'ssh-agent -s'
+
+3) ssh-copy-id -i amusk@172.20.10.4
+
+This allows me to add my public key to the server. I enter my password
+and I am able to login from now on without using my password again
+
+4) ssh-add 
+spacejam
+
+5) ssh amusk@172.20.10.4
+
+I am now able to login without a password
+
+6) firefox
+
+This opened using his machine

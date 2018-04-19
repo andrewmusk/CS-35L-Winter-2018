@@ -1,0 +1,57 @@
+1) Firstly I run which sort to check the sort
+
+/usr/local/cs/bin/sort
+
+2) I then run sort --version to check which version of sort 
+we have
+
+sort (GNU coreutils) 8.29
+
+3)  od -An -t f4 -N 40000000 < /dev/urandom | tr -s ' ' '\n' > large.txt
+
+We use the tr command to remove the space from the file. This replaces 
+the space with newline characters. We send the result of this to the 
+file large.txt 
+
+4) I check that the file is composed of 1000000 lines
+
+wc -l large.txt and I examine it 
+emacs large.txt
+
+5) I then check different levels of parallelism
+
+time -p sort -g --parallel=1 large.txt > /dev/null
+real 113.36
+user 112.71
+sys 0.64
+
+^1^2
+time -p sort -g --parallel=2 large.txt > /dev/null
+real 61.32
+user 114.92
+sys 1.26
+
+^2^4
+time -p sort -g --parallel=4 large.txt > /dev/null
+real 34.56
+user 115.58
+sys 0.53
+
+^4^8
+time -p sort -g --parallel=8 large.txt > /dev/null
+real 22.57
+user 116.37
+sys 0.90
+
+time -p sort -g large.txt > /dev/null
+real 22.52
+user 117.30
+sys 1.21
+
+From the results, we see that the real time of the function went up 
+as we increased the parallelism and increase the number of threads. However 
+we do notice that the increase in time is not linear with the number of threads
+executing. This is true because for sorting, we can break up the set to be 
+sorted into smaller sets, which makes the sort faster, however there is some
+added time for merging these groups of sorted elements again. Therefore, as
+we add more threads, the benefit of the added thread decreases. We also see that when we run the command without the parallel argument, the sort still runs on multiple threads.

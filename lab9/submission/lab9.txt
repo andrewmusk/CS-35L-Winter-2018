@@ -1,0 +1,150 @@
+Lab 9
+
+1) We first start by cloning the repo
+
+git clone https://git.savannah.gnu.org/git/diffutils.git
+
+2) we then enter the repo and check the log
+
+git log
+
+We put this in a file
+git log > git-log.txt
+
+3) we then get the tags
+
+git tag > git-tags.txt
+
+4) we then search the text file for a certain commit
+
+C-s maint: quote... 
+
+We get the hash for this commit which is 62ca21c8c1a5aa3488589dcb191a4ef04ae9ed4f
+
+5) We then create the patch
+
+git format-patch -1 62ca21c8c1a5aa3488589dcb191a4ef04ae9ed4f --stdout > quote-patch.txt
+
+6) git checkout v3.0
+
+7) patch -p1 < quote-patch.txt
+
+The following failed:
+patching file src/diff.c
+Hunk #10 FAILED at 862.
+Hunk #11 FAILED at 892.
+Hunk #12 FAILED at 928.
+
+patching file src/diff3.c
+Hunk #6 FAILED at 434.
+
+8) git status
+We see what changes we made and we see that we modified the following files
+
+HEAD detached at v3.0
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+  modified:   NEWS
+  modified:   README
+  modified:   TODO
+  modified:   doc/diagmeet.note
+  modified:   ms/config.bat
+  modified:   ms/config.site
+  modified:   po/en.po
+  modified:   src/analyze.c
+  modified:   src/cmp.c
+  modified:   src/context.c
+  modified:   src/diff.c
+  modified:   src/diff.h
+  modified:   src/diff3.c
+  modified:   src/dir.c
+  modified:   src/ifdef.c
+  modified:   src/io.c
+  modified:   src/sdiff.c
+  modified:   src/side.c
+  modified:   src/system.h
+  modified:   src/util.c
+  modified:   tests/help-version
+
+Since we changed some files that were not .c files, files that changed to code,
+we need to change the other files. These files are
+
+NEWS, README, TODO, doc/diagmeet.note, ms/config.bat,
+ms/config.site, po/en.po, src/diff.h, src/system.h, and tests/help-version.
+
+We do this using the emacs commands vc-diff and
+vc-revert.
+
+For each file we enter in emacs we type C-x v u to revert changes
+
+We also need to change the .c files that had changes other than character strings
+
+We run through the files and use C-c
+C-a for keeping, and for discarding is C-u C-c C-a
+
+We go through the files and manually choose the code that we keep and that we don't keep. 
+We land up having to change the files, src/analyze.c, src/cmp.c, src/context.c, src/diff.c, src/diff3.c, src/dir.c,
+src/ifdef.c, src/io.c, src/sdiff.c, src/side.c, and src/util.c.
+
+We then examine the files 
+
+diff3.c.rej and diff.c.rej. We find these using find src/*.rej 
+
+Examining diff3.c.rej there is only one line that needs to be changed
+
+We follow the same process for diff.c.rej and make the same replacements
+
+14) we then run 
+
+git clean -f
+
+This removed untracked files
+
+15) we check this with git status
+
+16) git diff > quote-3.0-patch.txt
+
+17) We then start the build process. 
+
+./bootstrap
+./configure
+make 
+make check
+
+We now have an executable diff from the modified code
+
+18) we can check our code by running diff . -
+and we get the result
+
+"diff: cannot compare '-' to a directory"
+
+showing that the correct apostrophe is being used
+
+19) We then check by running 
+
+diff --help
+
+FILES are 'FILE1 FILE2' or 'DIR1 DIR2'  ... 
+
+Again we see that the correct apostrophes are being used
+
+20) We then perform an overall check on our changes
+
+We create a new directory diffutils-original and diffutils-patch
+We copy the original code into the original folder and checkout v3.0.
+We copy our code from above into the patch directory. 
+
+We then compare these directories
+
+./diffutils/src/diff -pru diffutils-3.0 diffutils-3.0-patch >quote-3.0-test.txt
+
+after this we check these differences against the differences we got
+
+diff quote-3.0-test.txt quote-3.0-patch.txt
+
+When examining the differences between these files we see that the only
+changes between the files are in the header information and the use
+of ` versus '. From this we can say that our patch was successful in replacing
+` with '. 
